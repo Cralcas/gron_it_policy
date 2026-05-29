@@ -4,7 +4,7 @@
 
 <h2>Visionen (vad, varför)</h2>
 Visionen (vad, varför)
-Vi ska skapa en automatiserad lösning som sänker skolans energiförbrukning för IT-hårdvara under icke-arbetstid, utan att det negativt påverkar användarnas dagliga arbete.
+Vi vill skapa en enkel och användbar PowerShell-lösning för Grön IT som hjälper organisationer att minska onödig energiförbrukning. Produkten ska kunna inventera datorer i ett nätverk med hjälp av WMI/CIM, identifiera maskiner som verkar vara inaktiva och logga relevant information. Lösningen ska även kunna schemalägga eller trigga avstängning/viloläge för att minska elförbrukningen utan att störa aktiva användare. Målet är att skapa ett fungerande exempel som visar hur automatisering kan bidra till ett mer hållbart IT-arbete.
 
 <h2>Ramar och begränsningar</h2>
 Projektet startar fredag och ska vara helt klart för demonstration torsdag kl. 14:00. Lösningen måste baseras på scripting (PowerShell/Bash) och versionshanteras i GitHub.
