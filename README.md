@@ -2,8 +2,9 @@
 
 <h1>Info</h1>
 Vi har nu en discord. Ni kommer alla få en invite via skolmailen.
-På måndag klockan 11 börjar vi med en kort genomgång och en sprint review för sprint 0.
-Direkt efter kommer vi köra sprint planning och en daily scrum. Här komemr vi också bestämma tider för dagen.
+11.00 på måndag börjar vi med en kort genomgång och en sprint review för sprint 0.
+Direkt efter kommer vi köra sprint planning och en daily scrum. Här kommer vi också sätta tider för möten under dagen.
+Vi ses i Scrum Cermonies på discord.
 
 <h1>Product Vision</h1>
 
