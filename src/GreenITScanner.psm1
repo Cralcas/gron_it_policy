@@ -113,7 +113,46 @@ function Get-GreenITMachineInfo {
             Online         = $true
             LastBootUpTime = $null
             UptimeHours    = $null
-            Status         = "Okänd"
+            Status         = "Unknown"
+        }
+    }
+}
+
+# User story #9
+# Schemalägger avstängning för en maskin endast om den är markerad som Inaktiv.
+# Som standard körs funktionen i demo-läge och loggar bara vad som skulle ha hänt.
+# För att aktivera den riktiga så sätter man "$RealShutdown" till = $true
+function New-GreenITShutdownSchedule {
+    param(
+        [Parameter(Mandatory, ValueFromPipeline)]
+        [object]$MachineInfo,
+
+        [int]$DelayMinutes = 30,
+
+        [string]$LogPath = ".\greenit-shutdown.log",
+
+        [switch]$RealShutdown #= $true
+    )
+
+    process {
+        if ($MachineInfo.Status -ne "Inaktiv") {
+            $message = "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') - Shutdown skipped for $($MachineInfo.ComputerName). Status: $($MachineInfo.Status)"
+            Add-Content -Path $LogPath -Value $message
+
+            Write-Host "Shutdown skipped. The machine is not inactive."
+            return
+        }
+
+        $message = "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') - Shutdown scheduled for $($MachineInfo.ComputerName) in $DelayMinutes minutes."
+        Add-Content -Path $LogPath -Value $message
+
+        if ($RealShutdown) {
+            $seconds = $DelayMinutes * 60
+            shutdown.exe /s /t $seconds
+            Write-Host "Shutdown scheduled in $DelayMinutes minutes."
+        }
+        else {
+            Write-Host "DEMO: Shutdown would have been scheduled for $($MachineInfo.ComputerName) in $DelayMinutes minutes."
         }
     }
 }
