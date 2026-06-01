@@ -2,8 +2,15 @@
 
 <h1>Info och tider</h1>
 Varje dag kör vi:
-12.00 Sprint Planning + Daily Scrum
-17.00 Sprint Review + Sprint Retrospective
+
+<ul>
+  <li>
+    12.00 Sprint Planning + Daily Scrum
+  </li>
+  <li>
+    17.00 Sprint Review + Sprint Retrospective
+  </li>
+</ul>
 
 <h1>Product Vision</h1>
 
@@ -19,10 +26,10 @@ Istället för en lista på 50 funktioner, sätter man upp övergripande krav p�
 Exempel: Lösningen ska automatiskt kunna sätta datorer i strömsparläge/avstängning.
 
 <h1>Sprint 1 planning </h1>
-Produktägare och utvecklare gick igenom och klassificerade issues efter produktens behov.
+Produktägare och utvecklare gick igenom och klassificerade issues efter behov.
 Issues med klassficiseringen "Must have" prioriteras.
 
-<ul>
+<ul><h2>Fördelning Sprint 1</h2>
   <li>Maxiprogramm - https://github.com/Cralcas/gron_it_policy/issues/4</li>
   <li>Gustafssoon - https://github.com/Cralcas/gron_it_policy/issues/5, https://github.com/Cralcas/gron_it_policy/issues/7</li>
   <li>AntonEI - https://github.com/Cralcas/gron_it_policy/issues/8, https://github.com/Cralcas/gron_it_policy/issues/9,  https://github.com/Cralcas/gron_it_policy/issues/16, https://github.com/Cralcas/gron_it_policy/issues/20</li>
