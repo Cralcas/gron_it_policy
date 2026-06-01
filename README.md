@@ -25,7 +25,10 @@ Projektet startar fredag och ska vara helt klart för demonstration torsdag kl. 
 Istället för en lista på 50 funktioner, sätter man upp övergripande krav på vad produkten ska klara av för att bli godkänd.
 Exempel: Lösningen ska automatiskt kunna sätta datorer i strömsparläge/avstängning.
 
-<h1>Sprint 1 planning </h1>
+<hr>
+<h1>Sprint 1</h1>
+
+<h1>Sprint 1 Planning </h1>
 Produktägare och utvecklare gick igenom och klassificerade issues efter behov.
 Issues med klassficiseringen "Must have" prioriteras.
 
@@ -35,6 +38,16 @@ Issues med klassficiseringen "Must have" prioriteras.
   <li>AntonEI - https://github.com/Cralcas/gron_it_policy/issues/8, https://github.com/Cralcas/gron_it_policy/issues/9,  https://github.com/Cralcas/gron_it_policy/issues/16, https://github.com/Cralcas/gron_it_policy/issues/20</li>
   <li>dnal0 - https://github.com/Cralcas/gron_it_policy/issues/13, https://github.com/Cralcas/gron_it_policy/issues/17,</li>
 </ul>
+
+<h1>Sprint Review 1 </h1>
+Alla som planerats genomfördes under dagen. En issue kunde strykas då det visades sig att samma problem löstes i en annan issue.
+VM-miljön diskuterades och en smärre förenkling godtogs. Gruppen skapade en ny issue angående risken för och kontroll av dubbel kod.
+
+<h1>Sprint Retrospective 1</h1>
+Tider för ceremonier diskuterades, lite svårigheter att få det att passa hela gruppen till 100%. Men gruppen beslutade att de tider som etablerats också gäller tills vidare.
+Gruppen identifierade information som Scrum Master behöver undersöka; Hur ska presentationen se ut? Hur ser arbetet under onsdagen och Sprint 3 ut? Och hur ska Scrum Master dokumentera sitt arbete?
+<hr>
+
 
 
 
