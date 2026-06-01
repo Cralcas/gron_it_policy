@@ -19,3 +19,8 @@
 # Spara till CSV
 $filename = "Inventory_$(Get-Date -Format 'yyyy-MM-dd_HH-mm').csv"
 $results | Export-Csv -Path $filename -NoTypeInformation -Encoding UTF8
+
+# Feedback till användaren
+Write-Host "`nInventering Klar!" -ForegroundColor Green
+Write-Host "Hittade $($results.Count) online enheter" -ForegroundColor Green
+Write-Host "Resultaten sparades som: $filename" -ForegroundColor Green
