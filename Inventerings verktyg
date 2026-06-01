@@ -1,0 +1,98 @@
+# ============================================
+# Nätverksinventeringsverktyg
+# ============================================
+
+# Del 1 - Testa om en server/IP är online
+function Test-Server {
+    param(
+        [string]$server
+    )
+
+    if (Test-Connection $server -Count 1 -Quiet) {
+        Write-Host "$server online" -ForegroundColor Green
+    }
+    else {
+        Write-Host "$server offline" -ForegroundColor Red
+    }
+}
+
+# Del 2 - Skanna subnät och returnera enheter med IP + hostname
+function Invoke-NätverksSkan {
+    param(
+        [string]$subnät = "192.168.50"
+    )
+
+    Write-Host "Skannar $subnät.1-254..." -ForegroundColor Cyan
+
+    1..254 | ForEach-Object {
+        $ip = "$subnät.$_"
+
+        if (Test-Connection $ip -Count 1 -Quiet) {
+
+            $hostname = try {
+                (Resolve-DnsName $ip -ErrorAction Stop).NameHost
+            }
+            catch {
+                "Unknown"
+            }
+
+            [PSCustomObject]@{
+                IP       = $ip
+                Hostname = $hostname
+            }
+
+        }
+    }
+}
+
+# Del 3 - Hämta lokal datorinventering
+function Get-DatorInventarie {
+
+    $ipAdress = (Get-NetIPAddress -AddressFamily IPv4 |
+        Where-Object { $_.InterfaceAlias -notlike "*Loopback*" } |
+        Select-Object -First 1).IPAddress
+
+    $macAdress = (Get-NetAdapter |
+        Where-Object { $_.Status -eq "Up" } |
+        Select-Object -First 1).MacAddress
+
+    [PSCustomObject]@{
+        Datornamn       = $env:COMPUTERNAME
+        Operativsystem  = (Get-CimInstance Win32_OperatingSystem).Caption
+        SenasteUppstart = (Get-CimInstance Win32_OperatingSystem).LastBootUpTime
+        AktivAnvandare  = $env:USERNAME
+        IPAdress        = $ipAdress
+        MACAdress       = $macAdress
+    }
+}
+
+# ============================================
+# Kör verktyget
+# ============================================
+
+# Skapa output-mapp
+$outputMapp = "C:\Inventarie"
+if (-not (Test-Path $outputMapp)) {
+    New-Item -ItemType Directory -Path $outputMapp | Out-Null
+}
+
+# Testa servrar
+Test-Server google.com
+Test-Server github.com
+Test-Server localhost
+Test-Server påhittatnamn.xyz
+
+# Spara nätverksskanning till CSV
+Invoke-NätverksSkan -subnät "192.168.50" |
+    Export-Csv "$outputMapp\nätverk.csv" -NoTypeInformation -Encoding UTF8 -Delimiter ";"
+
+Write-Host "Nätverksskanning sparad: $outputMapp\nätverk.csv" -ForegroundColor Green
+
+# Spara lokal datorinventering till CSV
+Get-DatorInventarie |
+    Export-Csv "$outputMapp\inventarie.csv" -NoTypeInformation -Encoding UTF8 -Delimiter ";"
+
+Write-Host "Datorinventering sparad: $outputMapp\inventarie.csv" -ForegroundColor Green
+
+# Öppna inventarie-filen i Excel
+Start-Process "$outputMapp\inventarie.csv"
