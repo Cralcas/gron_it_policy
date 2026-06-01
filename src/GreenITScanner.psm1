@@ -52,3 +52,19 @@ function Start-GreenITScan {
         }
     }
 }
+
+function Get-GreenITMachineInfo {
+    param(
+        [Parameter(Mandatory)]
+        [string]$ComputerName
+    )
+
+    $online = Test-GreenITConnection -ComputerName $ComputerName
+    $hostName = Resolve-GreenITHostName -ComputerName $ComputerName
+
+    [pscustomobject]@{
+        ComputerName = $ComputerName
+        HostName     = $hostName
+        Online       = $online
+    }
+}
