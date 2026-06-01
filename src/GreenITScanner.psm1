@@ -15,3 +15,19 @@ function Test-GreenITConnection {
     }
 }
 
+# User story #16
+# Försöker hämta hostname för en angiven maskin eller IP-adress.
+# Returnerar hostname om det går, annars null.
+function Resolve-GreenITHostName {
+    param(
+        [Parameter(Mandatory)]
+        [string]$ComputerName
+    )
+
+    try {
+        return ([System.Net.Dns]::GetHostEntry($ComputerName)).HostName
+    }
+    catch {
+        return $null
+    }
+}
