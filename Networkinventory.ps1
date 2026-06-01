@@ -5,9 +5,17 @@
 
     if (Test-Connection -ComputerName $ip -Count 1 -Quiet) {
 
+        # Försöker hämta hostname med felhantering
+        $hostname = try {
+            (Resolve-DnsName -Name $ip -ErrorAction Stop).NameHost
+        }
+        catch {
+            "N/A"
+        }
+
         $result = [PSCustomObject]@{
             IP       = $ip
-            Hostname = "N/A"
+            Hostname = $hostname
             Status   = "Online"
             ScanTime = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
         }
