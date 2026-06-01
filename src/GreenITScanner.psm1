@@ -31,3 +31,24 @@ function Resolve-GreenITHostName {
         return $null
     }
 }
+
+# User story #20
+# Startar en nätverksskanning för en eller flera maskiner/IP-adresser.
+# Använder funktionerna för ping och hostname så att koden blir mer strukturerad och modulär.
+function Start-GreenITScan {
+    param(
+        [Parameter(Mandatory)]
+        [string[]]$ComputerName
+    )
+
+    foreach ($computer in $ComputerName) {
+        $online = Test-GreenITConnection -ComputerName $computer
+        $hostName = Resolve-GreenITHostName -ComputerName $computer
+
+        [pscustomobject]@{
+            ComputerName = $computer
+            HostName     = $hostName
+            Online       = $online
+        }
+    }
+}
