@@ -53,18 +53,67 @@ function Start-GreenITScan {
     }
 }
 
+# User story #8
+# Hämtar grundläggande information om en maskin.
+# Använder ping och hostname som grund för att senare bedöma om maskinen är aktiv eller inaktiv.
+# Om maskinen har varit igång mer än 8 timmar så får den status inaktiv eller får den aktiv
 function Get-GreenITMachineInfo {
     param(
         [Parameter(Mandatory)]
-        [string]$ComputerName
+        [string]$ComputerName,
+
+        [int]$InactiveAfterHours = 8
     )
 
     $online = Test-GreenITConnection -ComputerName $ComputerName
     $hostName = Resolve-GreenITHostName -ComputerName $ComputerName
 
-    [pscustomobject]@{
-        ComputerName = $ComputerName
-        HostName     = $hostName
-        Online       = $online
+    if (-not $online) {
+        return [pscustomobject]@{
+            ComputerName   = $ComputerName
+            HostName       = $hostName
+            Online         = $false
+            LastBootUpTime = $null
+            UptimeHours    = $null
+            Status         = "Offline"
+        }
+    }
+
+    try {
+        if ($ComputerName -eq "localhost" -or $ComputerName -eq "127.0.0.1" -or $ComputerName -eq $env:COMPUTERNAME) {
+            $os = Get-CimInstance -ClassName Win32_OperatingSystem -ErrorAction Stop
+        }
+        else {
+            $os = Get-CimInstance -ClassName Win32_OperatingSystem -ComputerName $ComputerName -ErrorAction Stop
+        }
+
+        $lastBoot = $os.LastBootUpTime
+        $uptimeHours = [math]::Round(((Get-Date) - $lastBoot).TotalHours, 1)
+
+        if ($uptimeHours -ge $InactiveAfterHours) {
+            $status = "Inaktiv"
+        }
+        else {
+            $status = "Aktiv"
+        }
+
+        return [pscustomobject]@{
+            ComputerName   = $ComputerName
+            HostName       = $hostName
+            Online         = $true
+            LastBootUpTime = $lastBoot
+            UptimeHours    = $uptimeHours
+            Status         = $status
+        }
+    }
+    catch {
+        return [pscustomobject]@{
+            ComputerName   = $ComputerName
+            HostName       = $hostName
+            Online         = $true
+            LastBootUpTime = $null
+            UptimeHours    = $null
+            Status         = "Okänd"
+        }
     }
 }
