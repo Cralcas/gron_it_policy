@@ -72,7 +72,7 @@ Det uppmärksammades också att flera user stories redan var uppfyllda i den kod
 
 <h1>Sprint Review 2 </h1>
 Under dagens arbete visade det sig att några issues tog längre tid än planerat och några behövde förläggas till ett senare skede i utveckligen.
-Gruppen valde därför att föra tillbaka några issues till produktbackloggen.
+Gruppen valde därför att föra tillbaka några issues till produktbackloggen. Majoriteten av dagens sprint gick dock enligt plan.
 
 <h1>Sprint Retrospective 2</h1>
 Inga funderingar, förbättringar eller upplevda problem dryftades. Gruppen upplevde arbetet runt Sprint 2 som väl fungerande.
