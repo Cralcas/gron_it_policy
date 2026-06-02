@@ -72,7 +72,7 @@ function Get-GreenITMachineInfo {
 
         [string]$GreenITPassword,
 
-        [int]$InactiveAfterHours = 8
+        [int]$InactiveAfterHours = 4
     )
 
     $online = Test-GreenITConnection -ComputerName $ComputerName
@@ -174,37 +174,58 @@ function Get-GreenITMachineInfo {
 # User story #9
 # Schemalägger avstängning för en maskin endast om den är markerad som Inaktiv.
 # Som standard körs funktionen i demo-läge och loggar bara vad som skulle ha hänt.
-# För att aktivera den riktiga så använder man parametern -RealShutdown.
+# För att aktivera riktig shutdown används parametern -RealShutdown.
 function New-GreenITShutdownSchedule {
     param(
         [Parameter(Mandatory, ValueFromPipeline)]
         [object]$MachineInfo,
 
-        [int]$DelayMinutes = 30,
+        [int]$DelayMinutes = 1,
 
-        [string]$LogPath = ".\greenit-shutdown.log",
+        [string]$LogPath = ".\logs\greenit-shutdown.log",
 
         [switch]$RealShutdown
     )
 
     process {
+        $logDirectory = Split-Path -Path $LogPath -Parent
+
+        if (-not [string]::IsNullOrWhiteSpace($logDirectory) -and -not (Test-Path $logDirectory)) {
+            New-Item -Path $logDirectory -ItemType Directory | Out-Null
+        }
+
         if ($MachineInfo.Status -ne "Inaktiv") {
             $message = "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') - Shutdown skipped for $($MachineInfo.ComputerName). Status: $($MachineInfo.Status)"
             Add-Content -Path $LogPath -Value $message -Encoding UTF8
 
-            Write-Host "Shutdown skipped. The machine is not inactive."
+            Write-Host "Shutdown skipped for $($MachineInfo.ComputerName). Status: $($MachineInfo.Status)"
             return
         }
 
-        $message = "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') - Shutdown scheduled for $($MachineInfo.ComputerName) in $DelayMinutes minutes."
-        Add-Content -Path $LogPath -Value $message -Encoding UTF8
-
         if ($RealShutdown) {
+            $message = "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') - REAL: Shutdown scheduled for $($MachineInfo.ComputerName) in $DelayMinutes minutes."
+            Add-Content -Path $LogPath -Value $message -Encoding UTF8
+
             $seconds = $DelayMinutes * 60
-            shutdown.exe /s /t $seconds
-            Write-Host "Shutdown scheduled in $DelayMinutes minutes."
+            $target = "\\$($MachineInfo.ComputerName)"
+
+            shutdown.exe /m $target /s /t $seconds /c "Green IT scheduled shutdown"
+
+            if ($LASTEXITCODE -eq 0) {
+                $message = "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') - SUCCESS: Shutdown command accepted for $($MachineInfo.ComputerName)."
+                Add-Content -Path $LogPath -Value $message -Encoding UTF8
+                Write-Host "Shutdown scheduled for $($MachineInfo.ComputerName) in $DelayMinutes minutes."
+            }
+            else {
+                $message = "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') - FAILED: Shutdown failed for $($MachineInfo.ComputerName). Exit code: $LASTEXITCODE"
+                Add-Content -Path $LogPath -Value $message -Encoding UTF8
+                Write-Warning "Shutdown failed for $($MachineInfo.ComputerName). Exit code: $LASTEXITCODE"
+            }
         }
         else {
+            $message = "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') - DEMO: Shutdown would have been scheduled for $($MachineInfo.ComputerName) in $DelayMinutes minutes."
+            Add-Content -Path $LogPath -Value $message -Encoding UTF8
+
             Write-Host "DEMO: Shutdown would have been scheduled for $($MachineInfo.ComputerName) in $DelayMinutes minutes."
         }
     }
