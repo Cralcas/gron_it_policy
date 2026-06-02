@@ -52,14 +52,14 @@ Gruppen identifierade information som Scrum Master behöver undersöka; Hur ska 
 <h1>Sprint 2</h1>
 
 <h1>Sprint 2 Planning </h1>
-Då alla "must have" features är avklarade fokuserar Sprint 2 på att skapa mervärde och att implementera "nice to have" features.
+Då alla "must have" issues blev färdiga under Sprint 1 fokuserar Sprint 2 på att skapa mervärde och att implementera "nice to have" features.
+Det uppmärksammades också att flera user stories redan var uppfyllda i den kod som producerats. Så dessa rensades ut från produktbackloggen.
 
 <ul><h2>Fördelning Sprint 2</h2>
-  <li></li>
-  <li></li>
-  <li></li>
-  <li></li>
-  <li></li>
+  <li>Gralcas - https://github.com/Cralcas/gron_it_policy/issues/12, https://github.com/Cralcas/gron_it_policy/issues/29</li>
+  <li>Gustafssoon - https://github.com/Cralcas/gron_it_policy/issues/6, https://github.com/Cralcas/gron_it_policy/issues/24</li>
+  <li>dnal0 - https://github.com/Cralcas/gron_it_policy/issues/15, https://github.com/Cralcas/gron_it_policy/issues/22,</li>
+  <li>DrWeremoth - https://github.com/Cralcas/gron_it_policy/issues/10,</li>
 </ul>
 
 <h1>Sprint Review 2 </h1>
