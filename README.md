@@ -12,6 +12,16 @@ Varje dag kör vi:
   </li>
 </ul>
 
+Onsdagens lektion sker i Aula 1 på Axel Weudel kl. 08.30.
+<ul>
+  <li>
+    If ($allaPåPlats -eq "true") {'Sprint 2 Planning + Scrum på lektion'}
+  </li>
+  <li>
+    Else {'Sprint 2 Planning + Scrum vid 12.00 som vanligt'}
+  </li>
+</ul>
+
 <h1>Product Vision</h1>
 
 <h2>Visionen (vad, varför)</h2>
