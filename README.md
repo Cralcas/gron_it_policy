@@ -72,12 +72,8 @@ Det uppmärksammades också att flera user stories redan var uppfyllda i den kod
 </ul>
 
 <h1>Sprint Review 2 </h1>
-TBA
+Under dagens arbete visade det sig att några issues tog längre tid än planerat och några behövde förläggas till ett senare skede i utveckligen.
+Gruppen valde därför att föra tillbaka några issues till produktbackloggen.
 
 <h1>Sprint Retrospective 2</h1>
-TBA
-
-
-
-
-
+Inga funderingar, förbättringar eller upplevda problem dryftades. Gruppen upplevde arbetet runt Sprint 2 som väl fungerande.
