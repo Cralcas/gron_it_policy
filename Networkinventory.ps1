@@ -1,8 +1,8 @@
 # Importerar Green IT Scanner-modulen med alla funktioner
-Import-Module "$PSScriptRoot\GreenITScanner.psm1" -Force
+Import-Module "$PSScriptRoot\src\GreenITScanner.psm1" -Force
 
 # Ange subnet som ska skannas
-$Subnet = "192.168.0"
+$Subnet = "192.168.x"
 
 # Skapar en lista med IP-adresser från 192.168.0.1 till 192.168.0.254
 $targets = 1..254 | ForEach-Object {
