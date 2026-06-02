@@ -48,6 +48,26 @@ Tider för ceremonier diskuterades, lite svårigheter att få det att passa hela
 Gruppen identifierade information som Scrum Master behöver undersöka; Hur ska presentationen se ut? Hur ser arbetet under onsdagen och Sprint 3 ut? Och hur ska Scrum Master dokumentera sitt arbete?
 <hr>
 
+<hr>
+<h1>Sprint 2</h1>
+
+<h1>Sprint 2 Planning </h1>
+Då alla "must have" features är avklarade fokuserar Sprint 2 på att skapa mervärde och att implementera "nice to have" features.
+
+<ul><h2>Fördelning Sprint 2</h2>
+  <li></li>
+  <li></li>
+  <li></li>
+  <li></li>
+  <li></li>
+</ul>
+
+<h1>Sprint Review 2 </h1>
+TBA
+
+<h1>Sprint Retrospective 2</h1>
+TBA
+
 
 
 
