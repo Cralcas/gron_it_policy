@@ -75,4 +75,26 @@ Under dagens arbete visade det sig att några issues tog längre tid än planera
 Gruppen valde därför att föra tillbaka några issues till produktbackloggen. Majoriteten av dagens sprint gick dock enligt plan.
 
 <h1>Sprint Retrospective 2</h1>
-Inga funderingar, förbättringar eller upplevda problem dryftades. Gruppen upplevde arbetet runt Sprint 2 som väl fungerande.
+Inga funderingar eller förbättringar dryftades. Gruppen upplevde inga problem runt Sprint 2.
+<hr>
+
+<hr>
+<h1>Sprint 3</h1>
+
+<h1>Sprint 3 Planning </h1>
+TBA
+
+<ul><h2>Fördelning Sprint 3</h2>
+  <li></li>
+  <li></li>
+  <li></li>
+  <li></li>
+</ul>
+
+<h1>Sprint Review 3 </h1>
+TBA
+
+<h1>Sprint Retrospective 3</h1>
+TBA
+
+<hr>
