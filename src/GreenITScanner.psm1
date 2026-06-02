@@ -43,7 +43,11 @@ function Start-GreenITScan {
 
     foreach ($computer in $ComputerName) {
         $online = Test-GreenITConnection -ComputerName $computer
-        $hostName = Resolve-GreenITHostName -ComputerName $computer
+        $hostName = $null
+
+        if ($online) {
+            $hostName = Resolve-GreenITHostName -ComputerName $computer
+        }
 
         [pscustomobject]@{
             ComputerName = $computer
@@ -80,7 +84,12 @@ function Get-GreenITMachineInfo {
     }
 
     try {
-        if ($ComputerName -eq "localhost" -or $ComputerName -eq "127.0.0.1" -or $ComputerName -eq $env:COMPUTERNAME) {
+        if (
+            $ComputerName -eq "localhost" -or
+            $ComputerName -eq "127.0.0.1" -or
+            $ComputerName -eq $env:COMPUTERNAME -or
+            $hostName -like "$env:COMPUTERNAME*"
+        ) {
             $os = Get-CimInstance -ClassName Win32_OperatingSystem -ErrorAction Stop
         }
         else {
@@ -107,13 +116,15 @@ function Get-GreenITMachineInfo {
         }
     }
     catch {
-        return [pscustomobject]@{
-            ComputerName   = $ComputerName
-            HostName       = $hostName
-            Online         = $true
-            LastBootUpTime = $null
-            UptimeHours    = $null
-            Status         = "Unknown"
+    Write-Warning "Kunde inte hämta CIM från $ComputerName. Fel: $($_.Exception.Message)"
+
+    return [pscustomobject]@{
+        ComputerName   = $ComputerName
+        HostName       = $hostName
+        Online         = $true
+        LastBootUpTime = $null
+        UptimeHours    = $null
+        Status         = "Unknown"
         }
     }
 }

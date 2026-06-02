@@ -2,16 +2,19 @@
 Import-Module "$PSScriptRoot\src\GreenITScanner.psm1" -Force
 
 # Ange subnet som ska skannas
-$Subnet = "192.168.x"
+$Subnet = "192.168.200"
 
 # Skapar en lista med IP-adresser från 192.168.0.1 till 192.168.0.254
-$targets = 1..254 | ForEach-Object {
+$targets = 1..23 | ForEach-Object {
     "$Subnet.$_"
 }
 
 # Enkel nätverksskanning
 # Start-GreenITScan kontrollerar om maskinen är online och försöker hämta hostname
-$scanResults = Start-GreenITScan -ComputerName $targets
+$scanResults = foreach ($target in $targets) {
+    Write-Host "Skannar $target..."
+    Start-GreenITScan -ComputerName $target
+}
 
 # Välj ut de maskiner som svarade på ping
 $onlineTargets = $scanResults |
