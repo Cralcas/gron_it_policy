@@ -1,5 +1,5 @@
 # User story #16
-# Testar om en angiven maskin eller IP-adress är online via ping.
+# Testar om en angiven maskin eller IP-adress ï¿½r online via ping.
 # Returnerar True om maskinen svarar, annars False.
 function Test-GreenITConnection {
     param(
@@ -16,8 +16,8 @@ function Test-GreenITConnection {
 }
 
 # User story #16
-# Försöker hämta hostname för en angiven maskin eller IP-adress.
-# Returnerar hostname om det går, annars null.
+# Fï¿½rsï¿½ker hï¿½mta hostname fï¿½r en angiven maskin eller IP-adress.
+# Returnerar hostname om det gï¿½r, annars null.
 function Resolve-GreenITHostName {
     param(
         [Parameter(Mandatory)]
@@ -33,8 +33,8 @@ function Resolve-GreenITHostName {
 }
 
 # User story #20
-# Startar en nätverksskanning för en eller flera maskiner/IP-adresser.
-# Använder funktionerna för ping och hostname så att koden blir mer strukturerad och modulär.
+# Startar en nï¿½tverksskanning fï¿½r en eller flera maskiner/IP-adresser.
+# Anvï¿½nder funktionerna fï¿½r ping och hostname sï¿½ att koden blir mer strukturerad och modulï¿½r.
 function Start-GreenITScan {
     param(
         [Parameter(Mandatory)]
@@ -58,9 +58,9 @@ function Start-GreenITScan {
 }
 
 # User story #8
-# Hämtar grundläggande information om en maskin.
-# Använder ping, hostname och CIM för att bedöma om maskinen är aktiv eller inaktiv.
-# Om maskinen har varit igång mer än angivet antal timmar får den status Inaktiv.
+# Hï¿½mtar grundlï¿½ggande information om en maskin.
+# Anvï¿½nder ping, hostname och CIM fï¿½r att bedï¿½ma om maskinen ï¿½r aktiv eller inaktiv.
+# Om maskinen har varit igï¿½ng mer ï¿½n angivet antal timmar fï¿½r den status Inaktiv.
 function Get-GreenITMachineInfo {
     param(
         [Parameter(Mandatory)]
@@ -117,7 +117,7 @@ function Get-GreenITMachineInfo {
                     $credentialHost = $ComputerName
                 }
 
-                # Tar bort .local eller domändel, t.ex. GronIT-PC1.local -> GronIT-PC1
+                # Tar bort .local eller domï¿½ndel, t.ex. GronIT-PC1.local -> GronIT-PC1
                 $credentialHost = ($credentialHost -split "\.")[0]
 
                 $credentialName = "$credentialHost\$GreenITUser"
@@ -153,7 +153,7 @@ function Get-GreenITMachineInfo {
         }
     }
     catch {
-        Write-Warning "Kunde inte hämta CIM från $ComputerName. Fel: $($_.Exception.Message)"
+        Write-Warning "Kunde inte hï¿½mta CIM frï¿½n $ComputerName. Fel: $($_.Exception.Message)"
 
         return [pscustomobject]@{
             ComputerName   = $ComputerName
@@ -171,10 +171,46 @@ function Get-GreenITMachineInfo {
     }
 }
 
+
+# User story: Portskanning
+# Testar vanliga portar pÃ¥ en online-enhet och returnerar en
+# lista med Ã¶ppna portar (t.ex. "80, 443, 3389").
+# AnvÃ¤nds fÃ¶r att ge mer detaljerad information i CSV-exporten.
+
+function Get-OpenPorts {
+    param(
+        [Parameter(Mandatory)]
+        [string]$ComputerName
+    )
+
+    # Vanliga portar att kontrollera
+    $portsToCheck = @(22, 80, 443, 3389, 445, 5985, 5986)
+    $openPorts = @()
+
+    foreach ($port in $portsToCheck) {
+        try {
+            $result = Test-NetConnection -ComputerName $ComputerName -Port $port -InformationLevel Quiet -WarningAction SilentlyContinue
+            if ($result) {
+                $openPorts += $port
+            }
+        }
+        catch {
+            # Ignorera fel pÃ¥ enskilda portar
+        }
+    }
+
+    if ($openPorts.Count -gt 0) {
+        return ($openPorts -join ", ")
+    }
+    else {
+        return ""
+    }
+}
+
 # User story #9
-# Schemalägger avstängning för en maskin endast om den är markerad som Inaktiv.
-# Som standard körs funktionen i demo-läge och loggar bara vad som skulle ha hänt.
-# För att aktivera riktig shutdown används parametern -RealShutdown.
+# Schemalï¿½gger avstï¿½ngning fï¿½r en maskin endast om den ï¿½r markerad som Inaktiv.
+# Som standard kï¿½rs funktionen i demo-lï¿½ge och loggar bara vad som skulle ha hï¿½nt.
+# Fï¿½r att aktivera riktig shutdown anvï¿½nds parametern -RealShutdown.
 function New-GreenITShutdownSchedule {
     param(
         [Parameter(Mandatory, ValueFromPipeline)]
