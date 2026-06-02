@@ -1,5 +1,5 @@
 # User story #16
-# Testar om en angiven maskin eller IP-adress Ã¤r online via ping.
+# Testar om en angiven maskin eller IP-adress är online via ping.
 # Returnerar True om maskinen svarar, annars False.
 function Test-GreenITConnection {
     param(
@@ -16,8 +16,8 @@ function Test-GreenITConnection {
 }
 
 # User story #16
-# FÃ¶rsÃ¶ker hÃ¤mta hostname fÃ¶r en angiven maskin eller IP-adress.
-# Returnerar hostname om det gÃ¥r, annars null.
+# Försöker hämta hostname för en angiven maskin eller IP-adress.
+# Returnerar hostname om det går, annars null.
 function Resolve-GreenITHostName {
     param(
         [Parameter(Mandatory)]
@@ -33,8 +33,8 @@ function Resolve-GreenITHostName {
 }
 
 # User story #20
-# Startar en nÃ¤tverksskanning fÃ¶r en eller flera maskiner/IP-adresser.
-# AnvÃ¤nder funktionerna fÃ¶r ping och hostname sÃ¥ att koden blir mer strukturerad och modulÃ¤r.
+# Startar en nätverksskanning för en eller flera maskiner/IP-adresser.
+# Använder funktionerna för ping och hostname så att koden blir mer strukturerad och modulär.
 function Start-GreenITScan {
     param(
         [Parameter(Mandatory)]
@@ -58,24 +58,33 @@ function Start-GreenITScan {
 }
 
 # User story #8
-# HÃ¤mtar grundlÃ¤ggande information om en maskin.
-# AnvÃ¤nder ping och hostname som grund fÃ¶r att senare bedÃ¶ma om maskinen Ã¤r aktiv eller inaktiv.
-# Om maskinen har varit igÃ¥ng mer Ã¤n 8 timmar sÃ¥ fÃ¥r den status inaktiv eller fÃ¥r den aktiv
+# Hämtar grundläggande information om en maskin.
+# Använder ping, hostname och CIM för att bedöma om maskinen är aktiv eller inaktiv.
+# Om maskinen har varit igång mer än angivet antal timmar får den status Inaktiv.
 function Get-GreenITMachineInfo {
     param(
         [Parameter(Mandatory)]
         [string]$ComputerName,
 
+        [string]$HostName,
+
+        [string]$GreenITUser,
+
+        [string]$GreenITPassword,
+
         [int]$InactiveAfterHours = 8
     )
 
     $online = Test-GreenITConnection -ComputerName $ComputerName
-    $hostName = Resolve-GreenITHostName -ComputerName $ComputerName
+
+    if ([string]::IsNullOrWhiteSpace($HostName)) {
+        $HostName = Resolve-GreenITHostName -ComputerName $ComputerName
+    }
 
     if (-not $online) {
         return [pscustomobject]@{
             ComputerName   = $ComputerName
-            HostName       = $hostName
+            HostName       = $HostName
             Online         = $false
             LastBootUpTime = $null
             UptimeHours    = $null
@@ -83,17 +92,45 @@ function Get-GreenITMachineInfo {
         }
     }
 
+    $cimSession = $null
+
     try {
-        if (
+        $isLocalMachine = (
             $ComputerName -eq "localhost" -or
             $ComputerName -eq "127.0.0.1" -or
             $ComputerName -eq $env:COMPUTERNAME -or
-            $hostName -like "$env:COMPUTERNAME*"
-        ) {
+            $HostName -like "$env:COMPUTERNAME*"
+        )
+
+        if ($isLocalMachine) {
             $os = Get-CimInstance -ClassName Win32_OperatingSystem -ErrorAction Stop
         }
         else {
-            $os = Get-CimInstance -ClassName Win32_OperatingSystem -ComputerName $ComputerName -ErrorAction Stop
+            $credential = $null
+
+            if (-not [string]::IsNullOrWhiteSpace($GreenITUser) -and -not [string]::IsNullOrWhiteSpace($GreenITPassword)) {
+                $securePassword = ConvertTo-SecureString $GreenITPassword -AsPlainText -Force
+
+                $credentialHost = $HostName
+
+                if ([string]::IsNullOrWhiteSpace($credentialHost)) {
+                    $credentialHost = $ComputerName
+                }
+
+                # Tar bort .local eller domändel, t.ex. GronIT-PC1.local -> GronIT-PC1
+                $credentialHost = ($credentialHost -split "\.")[0]
+
+                $credentialName = "$credentialHost\$GreenITUser"
+
+                $credential = New-Object System.Management.Automation.PSCredential ($credentialName, $securePassword)
+
+                $cimSession = New-CimSession -ComputerName $ComputerName -Credential $credential -ErrorAction Stop
+            }
+            else {
+                $cimSession = New-CimSession -ComputerName $ComputerName -ErrorAction Stop
+            }
+
+            $os = Get-CimInstance -ClassName Win32_OperatingSystem -CimSession $cimSession -ErrorAction Stop
         }
 
         $lastBoot = $os.LastBootUpTime
@@ -108,7 +145,7 @@ function Get-GreenITMachineInfo {
 
         return [pscustomobject]@{
             ComputerName   = $ComputerName
-            HostName       = $hostName
+            HostName       = $HostName
             Online         = $true
             LastBootUpTime = $lastBoot
             UptimeHours    = $uptimeHours
@@ -116,23 +153,28 @@ function Get-GreenITMachineInfo {
         }
     }
     catch {
-    Write-Warning "Kunde inte hämta CIM från $ComputerName. Fel: $($_.Exception.Message)"
+        Write-Warning "Kunde inte hämta CIM från $ComputerName. Fel: $($_.Exception.Message)"
 
-    return [pscustomobject]@{
-        ComputerName   = $ComputerName
-        HostName       = $hostName
-        Online         = $true
-        LastBootUpTime = $null
-        UptimeHours    = $null
-        Status         = "Unknown"
+        return [pscustomobject]@{
+            ComputerName   = $ComputerName
+            HostName       = $HostName
+            Online         = $true
+            LastBootUpTime = $null
+            UptimeHours    = $null
+            Status         = "Online-NoCIM"
+        }
+    }
+    finally {
+        if ($null -ne $cimSession) {
+            Remove-CimSession -CimSession $cimSession
         }
     }
 }
 
 # User story #9
-# SchemalÃ¤gger avstÃ¤ngning fÃ¶r en maskin endast om den Ã¤r markerad som Inaktiv.
-# Som standard kÃ¶rs funktionen i demo-lÃ¤ge och loggar bara vad som skulle ha hÃ¤nt.
-# FÃ¶r att aktivera den riktiga sÃ¥ sÃ¤tter man "$RealShutdown" till = $true
+# Schemalägger avstängning för en maskin endast om den är markerad som Inaktiv.
+# Som standard körs funktionen i demo-läge och loggar bara vad som skulle ha hänt.
+# För att aktivera den riktiga så använder man parametern -RealShutdown.
 function New-GreenITShutdownSchedule {
     param(
         [Parameter(Mandatory, ValueFromPipeline)]
@@ -142,20 +184,20 @@ function New-GreenITShutdownSchedule {
 
         [string]$LogPath = ".\greenit-shutdown.log",
 
-        [switch]$RealShutdown #= $true
+        [switch]$RealShutdown
     )
 
     process {
         if ($MachineInfo.Status -ne "Inaktiv") {
             $message = "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') - Shutdown skipped for $($MachineInfo.ComputerName). Status: $($MachineInfo.Status)"
-            Add-Content -Path $LogPath -Value $message
+            Add-Content -Path $LogPath -Value $message -Encoding UTF8
 
             Write-Host "Shutdown skipped. The machine is not inactive."
             return
         }
 
         $message = "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') - Shutdown scheduled for $($MachineInfo.ComputerName) in $DelayMinutes minutes."
-        Add-Content -Path $LogPath -Value $message
+        Add-Content -Path $LogPath -Value $message -Encoding UTF8
 
         if ($RealShutdown) {
             $seconds = $DelayMinutes * 60
