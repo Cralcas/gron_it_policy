@@ -42,7 +42,7 @@ Produkten ska kunna inventera datorer i ett nätverk med hjälp av WMI/CIM, iden
 <h1>Intruktioner för att köra script</h1>
 <ol>
   <li>
-    <ul>Skapa en .env-fil i mappen "src" med följande kod, var noga med att fylla i egna uppgifter:
+    <ul>Skapa en .env-fil i rootmappen med följande kod, var noga med att fylla i egna uppgifter:
       <li>GREENIT_USER=namnet på adminkonto</li>
       <li>GREENIT_PASSWORD=lösenord för adminkontot</li>
       <li>DISCORD_WEBHOOK_URL=adressen till utvald discord webhook</li>
