@@ -36,6 +36,22 @@ Projektet startar fredag och ska vara helt klart för demonstration torsdag kl. 
 Produkten ska kunna inventera datorer i ett nätverk med hjälp av WMI/CIM, identifiera maskiner som verkar vara inaktiva och logga relevant information. Lösningen ska även kunna schemalägga eller trigga avstängning/viloläge för att minska elförbrukningen utan att störa aktiva användare.
 
 <hr>
+
+<h1>Intruktioner för att köra script</h1>
+<ol>
+  <li>
+    <ul>Skapa en .env-fil i mappen "src" med följande kod, var noga med att fylla i egna uppgifter:
+      <li>GREENIT_USER=namnet på adminkonto</li>
+      <li>GREENIT_PASSWORD=lösenord för adminkontot</li>
+      <li>DISCORD_WEBHOOK_URL=adressen till utvald discord webhook</li>
+    </ul>
+  </li>
+  <li>På rad16 i Networkinventory.ps1: Ange det subnätverk som skall skannas </li>
+  <li>På rad 19 i Networkinventory.ps1: Ange det spann av subnätverkets adresser som skall skannas</li>
+  <li>Spara och kör script.</li>
+</ol>
+<hr>
+
 <h1>Sprint 1</h1>
 
 <h1>Sprint 1 Planning </h1>
@@ -85,7 +101,7 @@ Inga funderingar eller förbättringar dryftades. Gruppen upplevde inga problem 
 
 <h1>Sprint 3 Planning </h1>
 Gruppen hann inte med planering för Sprint 3 då den fasta tiden för mötet låg mer eller mindre runt lektionstid. Utvecklare och produktägare tog det successivt under sprintens arbete istället.
-Målet med sprinten handlade om att förfina, förbättra, rensa ur och iterera på kod. Nya issues tillfördes i form av user stories.
+Målet med sprinten handlade om att förfina, förbättra, rensa ur och iterera på kod. Samt säkerhet. Nya issues tillfördes i form av user stories.
 
 <ul><h2>Fördelning Sprint 3</h2>
   <li>Gralcas - https://github.com/Cralcas/gron_it_policy/issues/12, https://github.com/Cralcas/gron_it_policy/issues/29, https://github.com/Cralcas/gron_it_policy/issues/35</li>
