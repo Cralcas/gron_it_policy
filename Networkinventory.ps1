@@ -1,4 +1,4 @@
-# UTF-8-stöd
+# UTF-8-stï¿½d
 $OutputEncoding = [System.Text.Encoding]::UTF8
 
 # Fungerar bara i vanlig PowerShell-konsol, inte i PowerShell ISE
@@ -12,12 +12,12 @@ Import-Module "$PSScriptRoot\src\GreenITScanner.psm1" -Force
 # Ange subnet som ska skannas
 $Subnet = "192.168.200"
 
-# Skapar en lista med IP-adresser från 192.168.200.1 till 192.168.200.23
+# Skapar en lista med IP-adresser frï¿½n 192.168.200.1 till 192.168.200.23
 $targets = 1..23 | ForEach-Object {
     "$Subnet.$_"
 }
 
-# Läser in .env-fil
+# Lï¿½ser in .env-fil
 $EnvPath = Join-Path $PSScriptRoot ".env"
 
 if (Test-Path $EnvPath) {
@@ -41,28 +41,47 @@ if ([string]::IsNullOrWhiteSpace($GreenITUser) -or [string]::IsNullOrWhiteSpace(
     Write-Warning "GREENIT_USER eller GREENIT_PASSWORD saknas i .env."
 }
 
-# Enkel nätverksskanning
-# Start-GreenITScan kontrollerar om maskinen är online och försöker hämta hostname
-$scanResults = foreach ($target in $targets) {
-    Write-Host "Skannar $target..."
-    Start-GreenITScan -ComputerName $target
+# Enkel nÃ¤tverksskanning med progressbar
+# Start-GreenITScan kontrollerar om maskinen Ã¤r online och fÃ¶rsÃ¶ker hÃ¤mta hostname
+$scanResults = @()
+$total = $targets.Count
+$current = 0
+
+foreach ($target in $targets) {
+    $current++
+    
+    Write-Progress -Activity "Skannar nÃ¤tverk..." `
+                   -Status "Testar $target ($current av $total)" `
+                   -PercentComplete (($current / $total) * 100)
+
+    $scanResults += Start-GreenITScan -ComputerName $target
 }
 
-# Välj ut de maskiner som svarade på ping
+Write-Progress -Activity "Skannar nÃ¤tverk..." -Completed
+
+# Vï¿½lj ut de maskiner som svarade pï¿½ ping
 $onlineTargets = $scanResults |
     Where-Object { $_.Online -eq $true }
 
-# Hämta mer detaljerad inventarieinformation för online-maskiner
-# Get-GreenITMachineInfo hämtar till exempel senaste uppstartstid, uptime och status
+# Hï¿½mta mer detaljerad inventarieinformation fï¿½r online-maskiner + portskanning fÃ¶r onlinemaskiner
+# Get-GreenITMachineInfo hï¿½mtar till exempel senaste uppstartstid, uptime och status
 $inventoryResults = foreach ($target in $onlineTargets) {
-    Get-GreenITMachineInfo `
+    $machineInfo = Get-GreenITMachineInfo `
         -ComputerName $target.ComputerName `
         -HostName $target.HostName `
         -GreenITUser $GreenITUser `
         -GreenITPassword $GreenITPassword
+
+    # HÃ¤mta Ã¶ppna portar
+    $openPorts = Get-OpenPorts -ComputerName $target.ComputerName
+
+    # LÃ¤gg till OpenPorts i objektet
+    $machineInfo | Add-Member -MemberType NoteProperty -Name "OpenPorts" -Value $openPorts -Force
+
+    $machineInfo
 }
 
-# Lägg till offline-maskiner så de också syns i CSV-filen
+# Lï¿½gg till offline-maskiner sï¿½ de ocksï¿½ syns i CSV-filen
 $offlineResults = $scanResults |
     Where-Object { $_.Online -eq $false } |
     ForEach-Object {
@@ -73,10 +92,11 @@ $offlineResults = $scanResults |
             LastBootUpTime = $null
             UptimeHours    = $null
             Status         = "Offline"
+            OpenPorts      = ""
         }
     }
 
-# Slår ihop online-inventering och offline-resultat
+# Slï¿½r ihop online-inventering och offline-resultat
 $results = @($inventoryResults) + @($offlineResults)
 
 # Skapar logs-mapp om den saknas
@@ -86,31 +106,31 @@ if (-not (Test-Path $LogDirectory)) {
     New-Item -Path $LogDirectory -ItemType Directory | Out-Null
 }
 
-# Skapar filnamn för CSV-export
+# Skapar filnamn fï¿½r CSV-export
 $filename = "Inventory_$(Get-Date -Format 'yyyy-MM-dd_HH-mm').csv"
 
-# Skapar full sökväg till CSV-filen i logs-mappen
+# Skapar full sï¿½kvï¿½g till CSV-filen i logs-mappen
 $LogFile = Join-Path $LogDirectory $filename
 
 # Sparar resultatet till CSV
 $results | Export-Csv -Path $LogFile -NoTypeInformation -Encoding UTF8
 
-# Kör shutdown-funktionen i demo-läge för inaktiva maskiner
-# Utan -RealShutdown stängs inget av, det loggas bara vad som skulle ha hänt
+# Kï¿½r shutdown-funktionen i demo-lï¿½ge fï¿½r inaktiva maskiner
+# Utan -RealShutdown stï¿½ngs inget av, det loggas bara vad som skulle ha hï¿½nt
 $results |
     Where-Object { $_.Status -eq "Inaktiv" } |
     New-GreenITShutdownSchedule -DelayMinutes 30
 
-# Räknar antal online, inaktiva och offline maskiner
+# Rï¿½knar antal online, inaktiva och offline maskiner
 $onlineCount = @($results | Where-Object { $_.Online -eq $true }).Count
 $inactiveCount = @($results | Where-Object { $_.Status -eq "Inaktiv" }).Count
 $offlineCount = @($results | Where-Object { $_.Status -eq "Offline" }).Count
 
-# Skriver ut en kort sammanfattning till användaren
+# Skriver ut en kort sammanfattning till anvï¿½ndaren
 Write-Host "`nInventering klar!" -ForegroundColor Green
 Write-Host "Skannade $($results.Count) enheter" -ForegroundColor Green
 Write-Host "Hittade $onlineCount online enheter" -ForegroundColor Green
 Write-Host "Hittade $inactiveCount inaktiva enheter" -ForegroundColor Yellow
 Write-Host "Hittade $offlineCount offline enheter" -ForegroundColor DarkGray
 Write-Host "Resultaten sparades som: $LogFile" -ForegroundColor Green
-Write-Host "Shutdown-kontroll kördes i demo-läge." -ForegroundColor Cyan
+Write-Host "Shutdown-kontroll kï¿½rdes i demo-lï¿½ge." -ForegroundColor Cyan
