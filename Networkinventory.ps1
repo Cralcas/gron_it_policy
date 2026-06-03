@@ -9,6 +9,8 @@ if ($Host.Name -eq "ConsoleHost") {
 
 # Importerar Green IT Scanner-modulen med alla funktioner
 Import-Module "$PSScriptRoot\src\GreenITScanner.psm1" -Force
+Import-Module "$PSScriptRoot\src\GreenITDiscord.psm1" -Force
+Import-Module "$PSScriptRoot\src\GreenITShutdown.psm1" -Force
 
 # Ange subnet som ska skannas
 $Subnet = "192.168.200"
