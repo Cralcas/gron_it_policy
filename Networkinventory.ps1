@@ -47,7 +47,7 @@ if ([string]::IsNullOrWhiteSpace($GreenITUser) -or [string]::IsNullOrWhiteSpace(
   Write-Warning "GREENIT_USER eller GREENIT_PASSWORD saknas i .env."
 }
 
-# Enkel nätverksinventering med progressbar
+# Nätverksinventering med progressbar
 # Get-GreenITMachineInfo kontrollerar om maskinen är online,
 # försöker hämta hostname och hämtar CIM/WMI-information om det går.
 # För maskiner som är online kontrolleras även vanliga öppna portar.
@@ -55,29 +55,33 @@ $total = $targets.Count
 $current = 0
 
 $results = foreach ($target in $targets) {
-  $current++
+    $current++
 
-  Write-Progress -Activity "Skannar nätverk..." `
-    -Status "Testar $target ($current av $total)" `
-    -PercentComplete (($current / $total) * 100)
+    # Beräkna procent
+    $percentComplete = [math]::Round(($current / $total) * 100)
 
-  $machineInfo = Get-GreenITMachineInfo `
-    -ComputerName $target `
-    -GreenITUser $GreenITUser `
-    -GreenITPassword $GreenITPassword
+    # Rätt Write-Progress med procent
+    Write-Progress `
+        -Activity "Skannar nätverk..." `
+        -Status "Testar $target ($current av $total)" `
+        -PercentComplete $percentComplete `
+        -CurrentOperation "Bearbetar $target"
+    
+    $machineInfo = Get-GreenITMachineInfo `
+        -ComputerName $target `
+        -GreenITUser $GreenITUser `
+        -GreenITPassword $GreenITPassword
 
-  if ($machineInfo.Online -eq $true) {
-    # Hämta öppna portar endast för maskiner som är online
-    $openPorts = Get-OpenPorts -ComputerName $machineInfo.ComputerName
-  }
-  else {
-    $openPorts = ""
-  }
+    if ($machineInfo.Online -eq $true) {
+        $openPorts = Get-OpenPorts -ComputerName $machineInfo.ComputerName
+    }
+    else {
+        $openPorts = ""
+    }
 
-  # Lägg till OpenPorts i objektet
-  $machineInfo | Add-Member -MemberType NoteProperty -Name "OpenPorts" -Value $openPorts -Force
+    $machineInfo | Add-Member -MemberType NoteProperty -Name "OpenPorts" -Value $openPorts -Force
 
-  $machineInfo
+    $machineInfo
 }
 
 Write-Progress -Activity "Skannar nätverk..." -Completed
