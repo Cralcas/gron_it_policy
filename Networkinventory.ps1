@@ -1,4 +1,4 @@
-# UTF-8-stöd för att svenska tecken ska visas korrekt i terminal och loggar
+﻿# UTF-8-stöd för att svenska tecken ska visas korrekt i terminal och loggar
 $OutputEncoding = [System.Text.Encoding]::UTF8
 
 # Sätter även konsolens encoding till UTF-8 om scriptet körs i vanlig PowerShell-konsol

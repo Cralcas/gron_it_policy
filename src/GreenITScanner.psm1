@@ -1,4 +1,4 @@
-# User story #16
+﻿# User story #16
 # Testar om en angiven maskin eller IP-adress är online via en ping.
 # Returnerar True om maskinen svarar inom timeout, annars False.
 function Test-GreenITConnection {

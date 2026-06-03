@@ -1,4 +1,4 @@
-# User story #9
+﻿# User story #9
 # Schemalägger avstängning för en maskin endast om den är markerad som Inaktiv.
 # Som standard körs funktionen i demo-läge och loggar bara vad som skulle ha hänt.
 # För att aktivera riktig shutdown används parametern -RealShutdown.

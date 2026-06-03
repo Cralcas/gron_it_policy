@@ -1,4 +1,4 @@
-# User story #24
+﻿# User story #24
 # Skickar en kort sammanfattning av inventeringsresultatet till Discord via webhook.
 # Funktionen läser CSV-loggen som skapats efter skanningen.
 # Online-enheter visas med information, medan offline-enheter bara räknas.
