@@ -1,7 +1,8 @@
-# UTF-8-stöd
+# UTF-8-stöd för att svenska tecken ska visas korrekt i terminal och loggar
 $OutputEncoding = [System.Text.Encoding]::UTF8
 
-# Fungerar bara i vanlig PowerShell-konsol, inte i PowerShell ISE
+# Sätter även konsolens encoding till UTF-8 om scriptet körs i vanlig PowerShell-konsol
+# Detta fungerar inte alltid i PowerShell ISE, därför kontrolleras ConsoleHost först
 if ($Host.Name -eq "ConsoleHost") {
     [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 }
@@ -17,9 +18,10 @@ $targets = 1..23 | ForEach-Object {
     "$Subnet.$_"
 }
 
-# Läser in .env-fil
+# Sökväg till .env-filen där credentials och webhook lagras
 $EnvPath = Join-Path $PSScriptRoot ".env"
 
+# Läser in variabler från .env-filen om den finns, och sätter dem som processmiljövariabler
 if (Test-Path $EnvPath) {
     Get-Content $EnvPath | ForEach-Object {
         if ($_ -match "^\s*#" -or $_ -match "^\s*$") {
@@ -34,6 +36,8 @@ else {
     Write-Warning ".env saknas. CIM-inventering med credentials kan misslyckas."
 }
 
+# Hämtar användarnamn och lösenord från miljövariablerna
+# Dessa används av Get-GreenITMachineInfo för att hämta mer information via CIM/WMI
 $GreenITUser = $env:GREENIT_USER
 $GreenITPassword = $env:GREENIT_PASSWORD
 
@@ -94,6 +98,11 @@ $LogFile = Join-Path $LogDirectory $filename
 
 # Sparar resultatet till CSV
 $results | Export-Csv -Path $LogFile -NoTypeInformation -Encoding UTF8
+
+# Skickar resultatet till Discord
+Send-GreenITDiscordNotification `
+    -Title "Green IT-skanning klar" `
+    -LogPath $LogFile
 
 # Kör shutdown-funktionen i demo-läge för inaktiva maskiner
 # Utan -RealShutdown stängs inget av, det loggas bara vad som skulle ha hänt
