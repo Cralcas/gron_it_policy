@@ -12,7 +12,7 @@ Varje dag kör vi:
   </li>
 </ul>
 
-Onsdagens lektion sker i Aula 1 på Axel Weudel kl. 08.30.
+<b>Onsdagens lektion sker i Aula 1 på Axel Weudel kl. 08.30.</b>
 <ul>
   <li>
     If ($allaPåPlats -eq "true") {'Sprint 2 Planning + Scrum på lektion'}
@@ -21,6 +21,8 @@ Onsdagens lektion sker i Aula 1 på Axel Weudel kl. 08.30.
     Else {'Sprint 2 Planning + Scrum vid 12.00 som vanligt'}
   </li>
 </ul>
+
+<B>Presentation Torsdag - Presentationen ska genomföras 15.00 i R0. Vi samlas ca 14.00 utanför R0 för tid för reflektion.</B>
 
 <h1>Product Vision</h1>
 
@@ -37,7 +39,7 @@ Produkten ska kunna inventera datorer i ett nätverk med hjälp av WMI/CIM, iden
 <h1>Sprint 1</h1>
 
 <h1>Sprint 1 Planning </h1>
-Produktägare och utvecklare gick igenom och klassificerade issues efter behov.
+Produktägare och utvecklare gick igenom och klassificerade issues efter produktens behov.
 Issues med klassficiseringen "Must have" prioriteras.
 
 <ul><h2>Fördelning Sprint 1</h2>
