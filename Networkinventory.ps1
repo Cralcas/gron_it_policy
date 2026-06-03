@@ -7,8 +7,10 @@ if ($Host.Name -eq "ConsoleHost") {
     [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 }
 
-# Importerar Green IT Scanner-modulen med alla funktioner
+# Importerar Green IT-modulerna för inventering, Discord-notiser och shutdown-kontroll
 Import-Module "$PSScriptRoot\src\GreenITScanner.psm1" -Force
+Import-Module "$PSScriptRoot\src\GreenITDiscord.psm1" -Force
+Import-Module "$PSScriptRoot\src\GreenITShutdown.psm1" -Force
 
 # Ange subnet som ska skannas
 $Subnet = "192.168.200"
@@ -45,38 +47,32 @@ if ([string]::IsNullOrWhiteSpace($GreenITUser) -or [string]::IsNullOrWhiteSpace(
     Write-Warning "GREENIT_USER eller GREENIT_PASSWORD saknas i .env."
 }
 
-# Enkel nätverksskanning med progressbar
-# Start-GreenITScan kontrollerar om maskinen är online och försöker hämta hostname
-$scanResults = @()
+# Enkel nätverksinventering med progressbar
+# Get-GreenITMachineInfo kontrollerar om maskinen är online,
+# försöker hämta hostname och hämtar CIM/WMI-information om det går.
+# För maskiner som är online kontrolleras även vanliga öppna portar.
 $total = $targets.Count
 $current = 0
 
-foreach ($target in $targets) {
+$results = foreach ($target in $targets) {
     $current++
 
     Write-Progress -Activity "Skannar nätverk..." `
                    -Status "Testar $target ($current av $total)" `
                    -PercentComplete (($current / $total) * 100)
 
-    $scanResults += Start-GreenITScan -ComputerName $target
-}
-
-Write-Progress -Activity "Skannar nätverk..." -Completed
-
-# Välj ut de maskiner som svarade på ping
-$onlineTargets = $scanResults |
-    Where-Object { $_.Online -eq $true }
-
-# Hämta mer detaljerad inventarieinformation + portskanning för online-maskiner
-$inventoryResults = foreach ($target in $onlineTargets) {
     $machineInfo = Get-GreenITMachineInfo `
-        -ComputerName $target.ComputerName `
-        -HostName $target.HostName `
+        -ComputerName $target `
         -GreenITUser $GreenITUser `
         -GreenITPassword $GreenITPassword
 
-    # Hämta öppna portar
-    $openPorts = Get-OpenPorts -ComputerName $target.ComputerName
+    if ($machineInfo.Online -eq $true) {
+        # Hämta öppna portar endast för maskiner som är online
+        $openPorts = Get-OpenPorts -ComputerName $machineInfo.ComputerName
+    }
+    else {
+        $openPorts = ""
+    }
 
     # Lägg till OpenPorts i objektet
     $machineInfo | Add-Member -MemberType NoteProperty -Name "OpenPorts" -Value $openPorts -Force
@@ -84,23 +80,7 @@ $inventoryResults = foreach ($target in $onlineTargets) {
     $machineInfo
 }
 
-# Lägg till offline-maskiner så de också syns i CSV-filen
-$offlineResults = $scanResults |
-    Where-Object { $_.Online -eq $false } |
-    ForEach-Object {
-        [PSCustomObject]@{
-            ComputerName   = $_.ComputerName
-            HostName       = $_.HostName
-            Online         = $false
-            LastBootUpTime = $null
-            UptimeHours    = $null
-            Status         = "Offline"
-            OpenPorts      = ""
-        }
-    }
-
-# Slår ihop online-inventering och offline-resultat
-$results = @($inventoryResults) + @($offlineResults)
+Write-Progress -Activity "Skannar nätverk..." -Completed
 
 # Skapar logs-mapp om den saknas
 $LogDirectory = Join-Path $PSScriptRoot "logs"
@@ -123,13 +103,15 @@ Send-GreenITDiscordNotification `
     -Title "Green IT-skanning klar" `
     -LogPath $LogFile
 
-# Kör shutdown-funktionen i demo-läge för inaktiva maskiner
+# Kör shutdown-kontroll i demo-läge
+# Funktionen avgör själv om maskinen är Inaktiv eller ska hoppas över
 # Utan -RealShutdown stängs inget av, det loggas bara vad som skulle ha hänt
-$results |
-    Where-Object { $_.Status -eq "Inaktiv" } |
-    New-GreenITShutdownSchedule -DelayMinutes 30
+$ShutdownLogFile = Join-Path $LogDirectory "greenit-shutdown.log"
 
-# Räknar antal online, inaktiva och offline maskiner
+$results |
+    New-GreenITShutdownSchedule -DelayMinutes 30 -LogPath $ShutdownLogFile
+
+# Räknar antal online, inaktiva och offline maskiner för terminalsammanfattningen
 $onlineCount = @($results | Where-Object { $_.Online -eq $true }).Count
 $inactiveCount = @($results | Where-Object { $_.Status -eq "Inaktiv" }).Count
 $offlineCount = @($results | Where-Object { $_.Status -eq "Offline" }).Count
