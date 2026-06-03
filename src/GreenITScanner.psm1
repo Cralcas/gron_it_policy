@@ -1,5 +1,5 @@
 # User story #16
-# Testar om en angiven maskin eller IP-adress är online via ping.
+# Testar om en angiven maskin eller IP-adress ï¿½r online via ping.
 # Returnerar True om maskinen svarar, annars False.
 function Test-GreenITConnection {
     param(
@@ -16,8 +16,8 @@ function Test-GreenITConnection {
 }
 
 # User story #16
-# Försöker hämta hostname för en angiven maskin eller IP-adress.
-# Returnerar hostname om det går, annars null.
+# Fï¿½rsï¿½ker hï¿½mta hostname fï¿½r en angiven maskin eller IP-adress.
+# Returnerar hostname om det gï¿½r, annars null.
 function Resolve-GreenITHostName {
     param(
         [Parameter(Mandatory)]
@@ -33,8 +33,8 @@ function Resolve-GreenITHostName {
 }
 
 # User story #20
-# Startar en nätverksskanning för en eller flera maskiner/IP-adresser.
-# Använder funktionerna för ping och hostname så att koden blir mer strukturerad och modulär.
+# Startar en nï¿½tverksskanning fï¿½r en eller flera maskiner/IP-adresser.
+# Anvï¿½nder funktionerna fï¿½r ping och hostname sï¿½ att koden blir mer strukturerad och modulï¿½r.
 function Start-GreenITScan {
     param(
         [Parameter(Mandatory)]
@@ -58,9 +58,9 @@ function Start-GreenITScan {
 }
 
 # User story #8
-# Hämtar grundläggande information om en maskin.
-# Använder ping, hostname och CIM för att bedöma om maskinen är aktiv eller inaktiv.
-# Om maskinen har varit igång mer än angivet antal timmar får den status Inaktiv.
+# Hï¿½mtar grundlï¿½ggande information om en maskin.
+# Anvï¿½nder ping, hostname och CIM fï¿½r att bedï¿½ma om maskinen ï¿½r aktiv eller inaktiv.
+# Om maskinen har varit igï¿½ng mer ï¿½n angivet antal timmar fï¿½r den status Inaktiv.
 function Get-GreenITMachineInfo {
     param(
         [Parameter(Mandatory)]
@@ -117,7 +117,7 @@ function Get-GreenITMachineInfo {
                     $credentialHost = $ComputerName
                 }
 
-                # Tar bort .local eller domändel, t.ex. GronIT-PC1.local -> GronIT-PC1
+                # Tar bort .local eller domï¿½ndel, t.ex. GronIT-PC1.local -> GronIT-PC1
                 $credentialHost = ($credentialHost -split "\.")[0]
 
                 $credentialName = "$credentialHost\$GreenITUser"
@@ -153,7 +153,7 @@ function Get-GreenITMachineInfo {
         }
     }
     catch {
-        Write-Warning "Kunde inte hämta CIM från $ComputerName. Fel: $($_.Exception.Message)"
+        Write-Warning "Kunde inte hï¿½mta CIM frï¿½n $ComputerName. Fel: $($_.Exception.Message)"
 
         return [pscustomobject]@{
             ComputerName   = $ComputerName
@@ -172,9 +172,9 @@ function Get-GreenITMachineInfo {
 }
 
 # User story #9
-# Schemalägger avstängning för en maskin endast om den är markerad som Inaktiv.
-# Som standard körs funktionen i demo-läge och loggar bara vad som skulle ha hänt.
-# För att aktivera riktig shutdown används parametern -RealShutdown.
+# Schemalï¿½gger avstï¿½ngning fï¿½r en maskin endast om den ï¿½r markerad som Inaktiv.
+# Som standard kï¿½rs funktionen i demo-lï¿½ge och loggar bara vad som skulle ha hï¿½nt.
+# Fï¿½r att aktivera riktig shutdown anvï¿½nds parametern -RealShutdown.
 function New-GreenITShutdownSchedule {
     param(
         [Parameter(Mandatory, ValueFromPipeline)]
@@ -233,8 +233,8 @@ function New-GreenITShutdownSchedule {
 
 # User story #24
 # Skickar en kort sammanfattning av inventeringsresultatet till Discord via webhook.
-# Funktionen läser CSV-loggen som skapats efter skanningen.
-# Online-enheter visas med information, medan offline-enheter bara räknas.
+# Funktionen lï¿½ser CSV-loggen som skapats efter skanningen.
+# Online-enheter visas med information, medan offline-enheter bara rï¿½knas.
 function Send-GreenITDiscordNotification {
     param(
         [string]$Title = "Green IT-skanning klar",
@@ -244,25 +244,25 @@ function Send-GreenITDiscordNotification {
         [string]$WebhookUrl = $env:DISCORD_WEBHOOK_URL
     )
     # Om webhook saknas ska scriptet inte krascha.
-    # Det ska bara hoppa över Discord-notisen och skriva en varning.
+    # Det ska bara hoppa ï¿½ver Discord-notisen och skriva en varning.
     if ([string]::IsNullOrWhiteSpace($WebhookUrl)) {
         Write-Warning "DISCORD_WEBHOOK_URL saknas. Skickar ingen Discord-notis."
         return
     }
-    # Kontrollerar att CSV-loggen faktiskt finns innan funktionen försöker läsa den
+    # Kontrollerar att CSV-loggen faktiskt finns innan funktionen fï¿½rsï¿½ker lï¿½sa den
     if (-not $LogPath -or -not (Test-Path -LiteralPath $LogPath)) {
         Write-Warning "Loggfil saknas. Skickar ingen Discord-notis."
         return
     }
-    # Läser in CSV-filen med inventeringsresultatet
+    # Lï¿½ser in CSV-filen med inventeringsresultatet
     try {
         $rows = @(Import-Csv -LiteralPath $LogPath)
     }
     catch {
-        Write-Warning ("Kunde inte läsa CSV-loggen: {0}" -f $_.Exception.Message)
+        Write-Warning ("Kunde inte lï¿½sa CSV-loggen: {0}" -f $_.Exception.Message)
         return
     }
-    # Delar upp resultatet efter status så att online-enheter kan listas medan offline-enheter bara räknas
+    # Delar upp resultatet efter status sï¿½ att online-enheter kan listas medan offline-enheter bara rï¿½knas
     $onlineDevices = @(
         $rows | Where-Object {
             $_.Online -eq $true -or $_.Online -eq "True"
@@ -296,7 +296,7 @@ function Send-GreenITDiscordNotification {
     $content += "$($offlineDevices.Count) var offline. "
     $content += "$($inactiveDevices.Count) markerades som inaktiva.$nl$nl"
 
-    # Visar bara detaljer för online-enheter
+    # Visar bara detaljer fï¿½r online-enheter
     $content += "**Online:**$nl"
 
     if ($onlineDevices.Count -eq 0) {
@@ -306,30 +306,30 @@ function Send-GreenITDiscordNotification {
         foreach ($device in ($onlineDevices | Select-Object -First $MaxOnlineDevices)) {
             $ip = $device.ComputerName
 
-            # Om hostname saknas visas ett tydligt standardvärde istället för att lämna det tomt
+            # Om hostname saknas visas ett tydligt standardvï¿½rde istï¿½llet fï¿½r att lï¿½mna det tomt
             if ([string]::IsNullOrWhiteSpace($device.HostName)) {
-                $hostName = "Okänt hostnamn"
+                $hostName = "Okï¿½nt hostnamn"
             }
             else {
                 $hostName = $device.HostName
             }
-            # Om status saknas räknas maskinen ändå som online
+            # Om status saknas rï¿½knas maskinen ï¿½ndï¿½ som online
             if ([string]::IsNullOrWhiteSpace($device.Status)) {
                 $status = "Online"
             }
             else {
                 $status = $device.Status
             }
-            # Uptime kan saknas om CIM/WMI inte gick att läsa
+            # Uptime kan saknas om CIM/WMI inte gick att lï¿½sa
             if ([string]::IsNullOrWhiteSpace($device.UptimeHours)) {
-                $uptime = "Okänd uptime"
+                $uptime = "Okï¿½nd uptime"
             }
             else {
                 $uptime = "$($device.UptimeHours)h"
             }
-            # Senaste uppstartstid kan också saknas vid Online-NoCIM
+            # Senaste uppstartstid kan ocksï¿½ saknas vid Online-NoCIM
             if ([string]::IsNullOrWhiteSpace($device.LastBootUpTime)) {
-                $lastBoot = "Okänd starttid"
+                $lastBoot = "Okï¿½nd starttid"
             }
             else {
                 $lastBoot = $device.LastBootUpTime
@@ -337,14 +337,14 @@ function Send-GreenITDiscordNotification {
             # En rad per online-enhet med IP, hostname, status, uptime och senaste uppstartstid
             $content += "$ip - $hostName - $status - Uptime: $uptime - Startad: $lastBoot$nl"
         }
-        # Om många enheter är online visas bara ett begränsat antal
+        # Om mï¿½nga enheter ï¿½r online visas bara ett begrï¿½nsat antal
         if ($onlineDevices.Count -gt $MaxOnlineDevices) {
             $remaining = $onlineDevices.Count - $MaxOnlineDevices
             $content += "...och $remaining fler online-enheter.$nl"
         }
     }
-    # Discord har gräns på meddelandelängd.
-    # Kortar därför ner texten innan den skickas.
+    # Discord har grï¿½ns pï¿½ meddelandelï¿½ngd.
+    # Kortar dï¿½rfï¿½r ner texten innan den skickas.
     if ($content.Length -gt 1900) {
         $content = $content.Substring(0, 1900) + "$nl...kortad output"
     }
@@ -366,5 +366,39 @@ function Send-GreenITDiscordNotification {
     }
     catch {
         Write-Warning ("Kunde inte skicka Discord-notis: {0}" -f $_.Exception.Message)
+    }
+}
+
+# User story: Portskanning
+# Testar vanliga portar pÃ¥ en online-enhet och returnerar en kommaseparerad
+# lista med Ã¶ppna portar (t.ex. "80, 443, 3389").
+# AnvÃ¤nds fÃ¶r att ge mer detaljerad information i CSV-exporten.
+function Get-OpenPorts {
+    param(
+        [Parameter(Mandatory)]
+        [string]$ComputerName
+    )
+
+    # Vanliga portar att kontrollera
+    $portsToCheck = @(22, 80, 443, 3389, 445, 5985, 5986)
+    $openPorts = @()
+
+    foreach ($port in $portsToCheck) {
+        try {
+            $result = Test-NetConnection -ComputerName $ComputerName -Port $port -InformationLevel Quiet -WarningAction SilentlyContinue
+            if ($result) {
+                $openPorts += $port
+            }
+        }
+        catch {
+            # Ignorera fel pÃ¥ enskilda portar
+        }
+    }
+
+    if ($openPorts.Count -gt 0) {
+        return ($openPorts -join ", ")
+    }
+    else {
+        return ""
     }
 }
