@@ -22,9 +22,10 @@ Varje dag kör vi:
   </li>
 </ul>
 
-<B>Presentation Torsdag - Presentationen ska genomföras 15.00 i R0. Vi samlas ca 14.00 utanför R0 för tid för reflektion.</B>
+<B>Presentation Torsdag - Demonstrationen ska genomföras 15.00 i R0. Vi samlas ca 14.00 utanför R0 för tid för reflektion.</B>
 <hr>
 
+<hr>
 <h1>Product Vision</h1>
 
 <h2>Visionen</h2>
@@ -35,9 +36,9 @@ Projektet startar fredag och ska vara helt klart för demonstration torsdag kl. 
 
 <h2>Vad måste lösningen klara?</h2>
 Produkten ska kunna inventera datorer i ett nätverk med hjälp av WMI/CIM, identifiera maskiner som verkar vara inaktiva och logga relevant information. Lösningen ska även kunna schemalägga eller trigga avstängning/viloläge för att minska elförbrukningen utan att störa aktiva användare.
-
 <hr>
 
+<hr>
 <h1>Intruktioner för att köra script</h1>
 <ol>
   <li>
@@ -54,9 +55,6 @@ Produkten ska kunna inventera datorer i ett nätverk med hjälp av WMI/CIM, iden
 <hr>
 
 <hr>
-
-<hr>
-
 <h1>Sprint 1</h1>
 
 <h2>Sprint 1 Planning </h2>
