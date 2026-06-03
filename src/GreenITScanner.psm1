@@ -1,5 +1,5 @@
 # User story #16
-# Testar om en angiven maskin eller IP-adress �r online via ping.
+# Testar om en angiven maskin eller IP-adress är online via ping.
 # Returnerar True om maskinen svarar, annars False.
 function Test-GreenITConnection {
     param(
@@ -16,8 +16,8 @@ function Test-GreenITConnection {
 }
 
 # User story #16
-# F�rs�ker h�mta hostname f�r en angiven maskin eller IP-adress.
-# Returnerar hostname om det g�r, annars null.
+# Försöker hämta hostname för en angiven maskin eller IP-adress.
+# Returnerar hostname om det går, annars null.
 function Resolve-GreenITHostName {
     param(
         [Parameter(Mandatory)]
@@ -33,8 +33,8 @@ function Resolve-GreenITHostName {
 }
 
 # User story #20
-# Startar en n�tverksskanning f�r en eller flera maskiner/IP-adresser.
-# Anv�nder funktionerna f�r ping och hostname s� att koden blir mer strukturerad och modul�r.
+# Startar en nätverksskanning för en eller flera maskiner/IP-adresser.
+# Använder funktionerna för ping och hostname så att koden blir mer strukturerad och modulär.
 function Start-GreenITScan {
     param(
         [Parameter(Mandatory)]
@@ -58,9 +58,9 @@ function Start-GreenITScan {
 }
 
 # User story #8
-# H�mtar grundl�ggande information om en maskin.
-# Anv�nder ping, hostname och CIM f�r att bed�ma om maskinen �r aktiv eller inaktiv.
-# Om maskinen har varit ig�ng mer �n angivet antal timmar f�r den status Inaktiv.
+# Hämtar grundläggande information om en maskin.
+# Använder ping, hostname och CIM för att bedöma om maskinen är aktiv eller inaktiv.
+# Om maskinen har varit igång mer än angivet antal timmar får den status Inaktiv.
 function Get-GreenITMachineInfo {
     param(
         [Parameter(Mandatory)]
@@ -117,7 +117,7 @@ function Get-GreenITMachineInfo {
                     $credentialHost = $ComputerName
                 }
 
-                # Tar bort .local eller dom�ndel, t.ex. GronIT-PC1.local -> GronIT-PC1
+                # Tar bort .local eller domändel, t.ex. GronIT-PC1.local -> GronIT-PC1
                 $credentialHost = ($credentialHost -split "\.")[0]
 
                 $credentialName = "$credentialHost\$GreenITUser"
@@ -153,7 +153,7 @@ function Get-GreenITMachineInfo {
         }
     }
     catch {
-        Write-Warning "Kunde inte h�mta CIM fr�n $ComputerName. Fel: $($_.Exception.Message)"
+        Write-Warning "Kunde inte hämta CIM från $ComputerName. Fel: $($_.Exception.Message)"
 
         return [pscustomobject]@{
             ComputerName   = $ComputerName
@@ -172,9 +172,9 @@ function Get-GreenITMachineInfo {
 }
 
 # User story #9
-# Schemal�gger avst�ngning f�r en maskin endast om den �r markerad som Inaktiv.
-# Som standard k�rs funktionen i demo-l�ge och loggar bara vad som skulle ha h�nt.
-# F�r att aktivera riktig shutdown anv�nds parametern -RealShutdown.
+# Schemalägger avstängning för en maskin endast om den är markerad som Inaktiv.
+# Som standard körs funktionen i demo-läge och loggar bara vad som skulle ha hänt.
+# För att aktivera riktig shutdown används parametern -RealShutdown.
 function New-GreenITShutdownSchedule {
     param(
         [Parameter(Mandatory, ValueFromPipeline)]
@@ -233,8 +233,8 @@ function New-GreenITShutdownSchedule {
 
 # User story #24
 # Skickar en kort sammanfattning av inventeringsresultatet till Discord via webhook.
-# Funktionen l�ser CSV-loggen som skapats efter skanningen.
-# Online-enheter visas med information, medan offline-enheter bara r�knas.
+# Funktionen läser CSV-loggen som skapats efter skanningen.
+# Online-enheter visas med information, medan offline-enheter bara räknas.
 function Send-GreenITDiscordNotification {
     param(
         [string]$Title = "Green IT-skanning klar",
@@ -244,25 +244,25 @@ function Send-GreenITDiscordNotification {
         [string]$WebhookUrl = $env:DISCORD_WEBHOOK_URL
     )
     # Om webhook saknas ska scriptet inte krascha.
-    # Det ska bara hoppa �ver Discord-notisen och skriva en varning.
+    # Det ska bara hoppa över Discord-notisen och skriva en varning.
     if ([string]::IsNullOrWhiteSpace($WebhookUrl)) {
         Write-Warning "DISCORD_WEBHOOK_URL saknas. Skickar ingen Discord-notis."
         return
     }
-    # Kontrollerar att CSV-loggen faktiskt finns innan funktionen f�rs�ker l�sa den
+    # Kontrollerar att CSV-loggen faktiskt finns innan funktionen försöker läsa den
     if (-not $LogPath -or -not (Test-Path -LiteralPath $LogPath)) {
         Write-Warning "Loggfil saknas. Skickar ingen Discord-notis."
         return
     }
-    # L�ser in CSV-filen med inventeringsresultatet
+    # Läser in CSV-filen med inventeringsresultatet
     try {
         $rows = @(Import-Csv -LiteralPath $LogPath)
     }
     catch {
-        Write-Warning ("Kunde inte l�sa CSV-loggen: {0}" -f $_.Exception.Message)
+        Write-Warning ("Kunde inte läsa CSV-loggen: {0}" -f $_.Exception.Message)
         return
     }
-    # Delar upp resultatet efter status s� att online-enheter kan listas medan offline-enheter bara r�knas
+    # Delar upp resultatet efter status så att online-enheter kan listas medan offline-enheter bara räknas
     $onlineDevices = @(
         $rows | Where-Object {
             $_.Online -eq $true -or $_.Online -eq "True"
@@ -296,7 +296,7 @@ function Send-GreenITDiscordNotification {
     $content += "$($offlineDevices.Count) var offline. "
     $content += "$($inactiveDevices.Count) markerades som inaktiva.$nl$nl"
 
-    # Visar bara detaljer f�r online-enheter
+    # Visar bara detaljer för online-enheter
     $content += "**Online:**$nl"
 
     if ($onlineDevices.Count -eq 0) {
@@ -306,30 +306,30 @@ function Send-GreenITDiscordNotification {
         foreach ($device in ($onlineDevices | Select-Object -First $MaxOnlineDevices)) {
             $ip = $device.ComputerName
 
-            # Om hostname saknas visas ett tydligt standardv�rde ist�llet f�r att l�mna det tomt
+            # Om hostname saknas visas ett tydligt standardvärde istället för att lämna det tomt
             if ([string]::IsNullOrWhiteSpace($device.HostName)) {
-                $hostName = "Ok�nt hostnamn"
+                $hostName = "Okänt hostnamn"
             }
             else {
                 $hostName = $device.HostName
             }
-            # Om status saknas r�knas maskinen �nd� som online
+            # Om status saknas räknas maskinen ändå som online
             if ([string]::IsNullOrWhiteSpace($device.Status)) {
                 $status = "Online"
             }
             else {
                 $status = $device.Status
             }
-            # Uptime kan saknas om CIM/WMI inte gick att l�sa
+            # Uptime kan saknas om CIM/WMI inte gick att läsa
             if ([string]::IsNullOrWhiteSpace($device.UptimeHours)) {
-                $uptime = "Ok�nd uptime"
+                $uptime = "Okänd uptime"
             }
             else {
                 $uptime = "$($device.UptimeHours)h"
             }
-            # Senaste uppstartstid kan ocks� saknas vid Online-NoCIM
+            # Senaste uppstartstid kan också saknas vid Online-NoCIM
             if ([string]::IsNullOrWhiteSpace($device.LastBootUpTime)) {
-                $lastBoot = "Ok�nd starttid"
+                $lastBoot = "Okänd starttid"
             }
             else {
                 $lastBoot = $device.LastBootUpTime
@@ -337,14 +337,14 @@ function Send-GreenITDiscordNotification {
             # En rad per online-enhet med IP, hostname, status, uptime och senaste uppstartstid
             $content += "$ip - $hostName - $status - Uptime: $uptime - Startad: $lastBoot$nl"
         }
-        # Om m�nga enheter �r online visas bara ett begr�nsat antal
+        # Om många enheter är online visas bara ett begränsat antal
         if ($onlineDevices.Count -gt $MaxOnlineDevices) {
             $remaining = $onlineDevices.Count - $MaxOnlineDevices
             $content += "...och $remaining fler online-enheter.$nl"
         }
     }
-    # Discord har gr�ns p� meddelandel�ngd.
-    # Kortar d�rf�r ner texten innan den skickas.
+    # Discord har gräns på meddelandelängd.
+    # Kortar därför ner texten innan den skickas.
     if ($content.Length -gt 1900) {
         $content = $content.Substring(0, 1900) + "$nl...kortad output"
     }
