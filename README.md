@@ -82,19 +82,19 @@ Inga funderingar eller förbättringar dryftades. Gruppen upplevde inga problem 
 <h1>Sprint 3</h1>
 
 <h1>Sprint 3 Planning </h1>
-TBA
+Gruppen hann inte med planering för Sprint 3 då den fasta tiden för mötet låg mer eller mindre runt lektionstid. Utvecklare och produktägare tog det successivt under sprintens arbete istället.
+Målet med sprinten handlade om att förfina, förbättra, rensa ur och iterera på kod. Nya issues tillfördes i form av user stories.
 
 <ul><h2>Fördelning Sprint 3</h2>
-  <li></li>
-  <li></li>
-  <li></li>
+  <li>Gralcas - https://github.com/Cralcas/gron_it_policy/issues/12, https://github.com/Cralcas/gron_it_policy/issues/29, https://github.com/Cralcas/gron_it_policy/issues/35</li>
+  <li>Maxiprogramm - https://github.com/Cralcas/gron_it_policy/issues/37</li>
+  <li>Gustafssoon - https://github.com/Cralcas/gron_it_policy/issues/24, https://github.com/Cralcas/gron_it_policy/issues/31, https://github.com/Cralcas/gron_it_policy/issues/40, https://github.com/Cralcas/gron_it_policy/issues/43</li>
   <li></li>
 </ul>
 
 <h1>Sprint Review 3 </h1>
-TBA
+Gruppen hade en mycket effektiv sprint. Koden är numera uppdelad i moduler, hastigheten har ökats, återupprepad kod har rensats ur och koden har formaterats och kan nu hantera svenska tecken ordentligt. Allting som planerats blev avklarat förutom issue https://github.com/Cralcas/gron_it_policy/issues/30 som vi beslutade att inte genomföra.
 
 <h1>Sprint Retrospective 3</h1>
-TBA
-
+Att sprintplaneringen uteblev upplevdes inte som ett stort problem. Men gruppen kände också att strukturen på arbetet blev lite lidande. Arbetsfördelningen blev inte riktigt lika tydlig och några kände att de tog på sig för mycket ansvar. Något att ha med sig till i framtida sprints.
 <hr>
