@@ -124,3 +124,4 @@ Write-Host "Hittade $inactiveCount inaktiva enheter" -ForegroundColor Yellow
 Write-Host "Hittade $offlineCount offline enheter" -ForegroundColor DarkGray
 Write-Host "Resultaten sparades som: $LogFile" -ForegroundColor Green
 Write-Host "Shutdown-kontroll kördes i demo-läge." -ForegroundColor Cyan
+Read-Host | Out-Null
