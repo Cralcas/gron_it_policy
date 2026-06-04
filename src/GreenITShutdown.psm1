@@ -7,7 +7,7 @@ function New-GreenITShutdownSchedule {
     [Parameter(Mandatory, ValueFromPipeline)]
     [object]$MachineInfo,
 
-    [int]$DelayMinutes = 1,
+    [int]$DelayMinutes = 30,
 
     [string]$LogPath = ".\logs\greenit-shutdown.log",
 
