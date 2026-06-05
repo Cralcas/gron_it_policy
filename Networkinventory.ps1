@@ -54,19 +54,23 @@ if ([string]::IsNullOrWhiteSpace($GreenITUser) -or [string]::IsNullOrWhiteSpace(
 $total = $targets.Count
 $current = 0
 
+if ($total -eq 0) {
+    Write-Warning "Inga targets att skanna."
+    return
+}
+
 $results = foreach ($target in $targets) {
     $current++
 
-    # Beräkna procent
-    $percentComplete = [math]::Round(($current / $total) * 100)
+    # Beräkna procent som heltal
+    $percentComplete = [int]([math]::Round(($current / $total) * 100))
 
-    # Rätt Write-Progress med procent
     Write-Progress `
         -Activity "Skannar nätverk..." `
-        -Status "Testar $target ($current av $total)" `
+        -Status "Testar $target ($current av $total) [$percentComplete%]" `
         -PercentComplete $percentComplete `
-        -CurrentOperation "Bearbetar $target"
-    
+        -CurrentOperation "Hämtar maskininformation"
+
     $machineInfo = Get-GreenITMachineInfo `
         -ComputerName $target `
         -GreenITUser $GreenITUser `
